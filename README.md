@@ -21,12 +21,22 @@
 读取豆包已登录会话的回答正文与「参考资料」来源列表。**只读，不发送任何消息。**
 
 ```bash
+cp doubao-read/targets.example.json doubao-read/targets.json   # 先复制示例配置
 node doubao-read/doubao_read.mjs --list   # 列出会话（拿 id）
 node doubao-read/doubao_read.mjs          # 按 targets.json 全量读取
 node doubao-read/doubao_read.mjs --only A1,A3
 ```
 
 前置：本地 Edge 开 CDP（`--remote-debugging-port=9222`）、豆包已登录、依赖 playwright-core。
+
+`targets.json` 含个人会话数据，**已在 .gitignore 中，不要提交**。
+
+依赖 playwright-core，二选一：
+
+```bash
+npm i playwright-core                          # 装在本目录
+PLAYWRIGHT_CORE_PATH=/path/to/dir node doubao-read/doubao_read.mjs --list   # 或指向已有 node_modules 的目录
+```
 
 ### 2. platform-check —— 平台可抓取性与收录巡检
 
