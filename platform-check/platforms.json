@@ -1,0 +1,69 @@
+{
+  "_说明": "逐曜AI 技术论坛账号与文章巡检配置。填入账号名与链接后即可运行 check_platforms.py。",
+  "_巡检频率": "低频只读：发文后 D+1、D+7 各一次即可。不要每天跑，避免触发平台风控。",
+  "accountName": "逐曜AI",
+  "platforms": [
+    {
+      "name": "腾讯云社区",
+      "enabled": true,
+      "home": "https://cloud.tencent.com/developer/user/11968918",
+      "homeMetrics": "supported",
+      "sitemaps": [
+        "https://cloud.tencent.com/sitemap/sitemap_qccommunity_article_000.xml",
+        "https://cloud.tencent.com/sitemap/sitemap_qccommunity_article_001.xml",
+        "https://cloud.tencent.com/sitemap/sitemap_qccommunity_article_002.xml",
+        "https://cloud.tencent.com/sitemap/sitemap_qccommunity_article_003.xml",
+        "https://cloud.tencent.com/sitemap/sitemap_qccommunity_article_004.xml",
+        "https://cloud.tencent.com/sitemap/sitemap_qccommunity_article_005.xml"
+      ],
+      "note": "主页URL已填(2026-10-02)。⚠️ 本机直抓当前被 EdgeOne JS挑战页拦(29182字节壳)，巡检报 BLOCKED 属正常；账号名/文章页已在服务端HTML实证(作者卡片「逐曜AI」、主页title「逐曜AI - 个人中心」)"
+    },
+    {
+      "name": "掘金",
+      "enabled": true,
+      "home": "",
+      "homeMetrics": "unknown",
+      "sitemaps": ["https://juejin.cn/sitemap/posts/index.xml"],
+      "note": "待填主页 URL（格式 https://juejin.cn/user/xxxxx）；posts sitemap 为索引，需逐层展开"
+    },
+    {
+      "name": "CSDN",
+      "enabled": true,
+      "home": "",
+      "homeMetrics": "unknown",
+      "note": "待填主页 URL"
+    },
+    {
+      "name": "阿里云开发者社区",
+      "enabled": true,
+      "home": "",
+      "homeMetrics": "unknown",
+      "note": "待填；需先完成阿里云实名认证才可发文"
+    },
+    {
+      "name": "华为云社区",
+      "enabled": true,
+      "home": "",
+      "homeMetrics": "unknown",
+      "note": "待填"
+    },
+    {
+      "name": "博客园",
+      "enabled": true,
+      "home": "",
+      "homeMetrics": "unknown",
+      "note": "待填"
+    }
+  ],
+  "articles": [
+    {
+      "title": "把AI友好拆成可测判据后我们发现有两处判据是错的",
+      "keyword": "结构判据",
+      "urls": [
+        { "platform": "腾讯云社区", "url": "https://cloud.tencent.com/developer/article/2753736" },
+        { "platform": "掘金", "url": "" },
+        { "platform": "CSDN", "url": "" }
+      ]
+    }
+  ]
+}
