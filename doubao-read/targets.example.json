@@ -1,0 +1,9 @@
+{
+  "_comment": "复制本文件为 targets.json 后填写。targets.json 含个人会话数据，不要提交到公开仓库。",
+  "outDir": "./output",
+  "markers": ["你的品牌名", "你的域名", "你的独占术语"],
+  "sessions": [
+    { "label": "示例-问题一", "id": "填入豆包会话 id" },
+    { "label": "示例-问题二", "id": "填入豆包会话 id" }
+  ]
+}
