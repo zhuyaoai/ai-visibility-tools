@@ -38,9 +38,14 @@ HISTORY = os.path.join(BASE, "history.jsonl")
 
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36")
+# 默认走系统证书校验。公开仓库里关闭证书校验是坏示范，会有人直接复制去用。
+# 仅当目标站点证书异常、且你明确接受风险时，再显式关闭：
+#   python check_platforms.py --insecure     或     CHECK_INSECURE=1 python check_platforms.py
+INSECURE = ("--insecure" in sys.argv) or (os.environ.get("CHECK_INSECURE") == "1")
 CTX = ssl.create_default_context()
-CTX.check_hostname = False
-CTX.verify_mode = ssl.CERT_NONE
+if INSECURE:
+    CTX.check_hostname = False
+    CTX.verify_mode = ssl.CERT_NONE
 
 
 BLOCK_SIGNALS = ("Security Verification", "请输入验证码", "人机验证",
