@@ -11,18 +11,25 @@ import { fileURLToPath } from 'url';
 import { createRequire } from 'module';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-// playwright-core 解析顺序：工具目录本地 node_modules → D:\geo\tmpcdp\node_modules（有实测依赖）
+// playwright-core 解析顺序：工具目录本地 node_modules -> 环境变量 PLAYWRIGHT_CORE_PATH
+// 该仓库公开，不硬编码任何本机路径
 function loadPlaywright() {
-  const candidates = [HERE, 'D:\\geo\\tmpcdp'];
+  const candidates = [HERE];
+  if (process.env.PLAYWRIGHT_CORE_PATH) candidates.push(process.env.PLAYWRIGHT_CORE_PATH);
   for (const dir of candidates) {
     const pkg = path.join(dir, 'node_modules', 'playwright-core', 'package.json');
     if (fs.existsSync(pkg)) return createRequire(path.join(dir, 'package.json'))('playwright-core');
   }
-  console.error('找不到 playwright-core：请在 HERE 或 D:\\geo\\tmpcdp 下 npm i playwright-core');
+  console.error('找不到 playwright-core。两种解法：\n  1) 在本目录执行 npm i playwright-core\n  2) 设置环境变量 PLAYWRIGHT_CORE_PATH 指向含 node_modules 的目录');
   process.exit(1);
 }
 const { chromium } = loadPlaywright();
-const cfg = JSON.parse(fs.readFileSync(path.join(HERE, 'targets.json'), 'utf-8'));
+const cfgPath = path.join(HERE, 'targets.json');
+if (!fs.existsSync(cfgPath)) {
+  console.error('缺少 targets.json：请先复制 targets.example.json 为 targets.json，再填入你自己的会话 id 与输出目录');
+  process.exit(1);
+}
+const cfg = JSON.parse(fs.readFileSync(cfgPath, 'utf-8'));
 const argOnly = (process.argv.find(a => a.startsWith('--only')) || '').replace('--only', '').replace(/^=/, '');
 const LIST_MODE = process.argv.includes('--list');
 const onlySet = argOnly ? new Set(argOnly.split(',').map(s => s.trim())) : null;
@@ -63,7 +70,8 @@ if (LIST_MODE) {
 // ---------- 读取模式 ----------
 const sessions = cfg.sessions.filter(s => !onlySet || [...onlySet].some(k => s.label.includes(k)));
 if (sessions.length === 0) { console.error('--only 没匹配到任何 label'); process.exit(1); }
-const OUT = cfg.outDir.endsWith('\\') ? cfg.outDir : cfg.outDir + '\\';
+const OUT = path.resolve(HERE, cfg.outDir || './output');
+fs.mkdirSync(OUT, { recursive: true });
 fs.mkdirSync(OUT, { recursive: true });
 
 // 真实 URL 解码（豆包用 link.wtturl.cn 跳转包裹）
@@ -126,8 +134,8 @@ for (const { label, id } of sessions) {
     }
   } catch (e) { /* 展开失败不影响正文 */ }
 
-  fs.writeFileSync(OUT + label + '.正文.txt', body, 'utf-8');
-  if (srcText) fs.writeFileSync(OUT + label + '.参考资料.txt', srcText + '\n\n' + srcLinks.map(l => l.txt + ' -> ' + l.real).join('\n'), 'utf-8');
+  fs.writeFileSync(path.join(OUT, label + '.正文.txt'), body, 'utf-8');
+  if (srcText) fs.writeFileSync(path.join(OUT, label + '.参考资料.txt'), srcText + '\n\n' + srcLinks.map(l => l.txt + ' -> ' + l.real).join('\n'), 'utf-8');
 
   const uniq = [...new Map(srcLinks.map(l => [l.real, l])).values()];
   const flags = {};
@@ -142,6 +150,6 @@ for (const { label, id } of sessions) {
   res.push({ label, id, len: body.length, flags, srcLinks: uniq });
 }
 
-fs.writeFileSync(OUT + '_分析.json', JSON.stringify(res, null, 2), 'utf-8');
+fs.writeFileSync(path.join(OUT, '_分析.json'), JSON.stringify(res, null, 2), 'utf-8');
 console.log(`\n完成 ${res.length} 个会话 → ${OUT}`);
 await browser.close();
