@@ -1,0 +1,11 @@
+# 本地配置含个人会话数据，不提交
+targets.json
+
+# 工具运行输出
+output/
+out/
+
+# 依赖
+node_modules/
+__pycache__/
+*.pyc
